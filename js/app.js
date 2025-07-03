@@ -4,7 +4,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const response = await fetch('data/faqs.yaml');
     const yamlText = await response.text();
     const faqs = window.jsyaml.load(yamlText);
-    faqs.forEach((faq, i) => faq.id = i); // assign unique id
+
+    // Normalize data for FlexSearch
+    faqs.forEach((faq, i) => {
+      faq.id = i;
+      faq.question = typeof faq.question === 'string' ? faq.question : '';
+      faq.answer = typeof faq.answer === 'string' ? faq.answer : '';
+      if (!Array.isArray(faq.tags)) faq.tags = [];
+      faq.tags = faq.tags.map(tag => typeof tag === 'string' ? tag : String(tag));
+    });
 
     // Build FlexSearch Document index
     const index = new FlexSearch.Document({
