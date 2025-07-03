@@ -1,63 +1,66 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const response = await fetch('data/dataset.yaml');
-        const yamlText = await response.text();
-        const data = jsyaml.load(yamlText);
+  try {
+    const response = await fetch('data/faqs.yaml');
+    const yamlText = await response.text();
+    const faqs = window.jsyaml.load(yamlText);
 
-        const resultsContainer = document.getElementById('results');
-        const searchInput = document.getElementById('tagSearch');
+    const searchInput = document.getElementById('tagSearch');
+    const accordion = document.getElementById('faqAccordion');
 
-        const renderCard = (item) => {
-            const col = document.createElement('div');
-            col.className = 'col-md-4 mb-4';
-            
-            const tagsHtml = item.tags
-                .map(tag => `<span class="tag badge bg-secondary me-1">${tag}</span>`)
-                .join('');
+    // Highlight match in question
+    const highlight = (text, query) => {
+      if (!query) return text;
+      const re = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'ig');
+      return text.replace(re, '<mark>$1</mark>');
+    };
 
-            col.innerHTML = `
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">${item.title}</h5>
-                        <p class="card-text">${item.description}</p>
-                        <div class="card-tags mt-3">
-                            ${tagsHtml}
-                        </div>
-                    </div>
-                </div>
-            `;
-            return col;
-        };
+    // Render accordion
+    const render = (list, query) => {
+      accordion.innerHTML = '';
+      if (!list.length) {
+        accordion.innerHTML = '<div class="text-center text-muted">No matches found</div>';
+        return;
+      }
+      list.forEach((faq, i) => {
+        const tags = faq.tags.map(tag => `<span class="badge me-1">${tag}</span>`).join('');
+        const qHtml = highlight(faq.question, query);
+        accordion.innerHTML += `
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="heading${i}">
+              <button class="accordion-button collapsed d-flex align-items-center justify-content-between gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${i}" aria-expanded="false" aria-controls="collapse${i}">
+                <span>${qHtml}</span>
+                <span>${tags}</span>
+              </button>
+            </h2>
+            <div id="collapse${i}" class="accordion-collapse collapse" aria-labelledby="heading${i}" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                ${window.marked ? window.marked.parse(faq.answer) : faq.answer.replace(/\n/g,'<br>')}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    };
 
-        const renderItems = (items) => {
-            resultsContainer.innerHTML = '';
-            if (items.length === 0) {
-                resultsContainer.innerHTML = '<div class="col-12 text-center">No matches found</div>';
-                return;
-            }
-            items.forEach(item => {
-                resultsContainer.appendChild(renderCard(item));
-            });
-        };
+    // Filter function
+    const filter = (query) => {
+      const q = query.toLowerCase().trim();
+      return faqs.filter(faq =>
+        faq.question.toLowerCase().includes(q) ||
+        faq.tags.some(tag => tag.toLowerCase().includes(q))
+      );
+    };
 
-        const filterItems = (query) => {
-            const normalizedQuery = query.toLowerCase().trim();
-            return data.filter(item =>
-                item.tags.some(tag => tag.toLowerCase().includes(normalizedQuery))
-            );
-        };
+    // Initial render
+    render(faqs, '');
 
-        // Initial render
-        renderItems(data);
-
-        // Search handler
-        searchInput.addEventListener('input', (e) => {
-            const filteredItems = filterItems(e.target.value);
-            renderItems(filteredItems);
-        });
-
-    } catch (error) {
-        console.error('Error loading or parsing YAML:', error);
-        alert('Failed to load data. Please check the console for details.');
-    }
+    // Search handler
+    searchInput.addEventListener('input', e => {
+      const val = e.target.value;
+      render(filter(val), val);
+    });
+  } catch (err) {
+    console.error('Error loading or parsing faqs.yaml:', err);
+    alert('Failed to load FAQs. Please check the console for details.');
+  }
 });

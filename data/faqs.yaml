@@ -1,0 +1,39 @@
+- question: What is ONDC?
+  answer: |
+    ONDC (Open Network for Digital Commerce) is an open protocol network that aims to democratize digital commerce in India by enabling interoperability and inclusivity across platforms.
+  tags: [about, overview, network, india, digital-commerce]
+
+- question: How do I join ONDC as a seller?
+  answer: |
+    To join ONDC as a seller, register with any ONDC-enabled platform (buyer or seller app) and complete the onboarding process as per their guidelines.
+  tags: [onboarding, seller, registration, process, guide]
+
+- question: What are the benefits of ONDC for small businesses?
+  answer: |
+    ONDC provides small businesses with greater market access, reduced dependency on single platforms, and improved discoverability for their products and services.
+  tags: [benefits, small-business, access, discoverability, market]
+
+- question: Is ONDC a government initiative?
+  answer: |
+    Yes, ONDC is an initiative supported by the Government of India to foster open, inclusive, and competitive digital commerce.
+  tags: [government, policy, india, initiative, support]
+
+- question: How does ONDC ensure data privacy?
+  answer: |
+    ONDC follows strict data privacy and security protocols, ensuring that user data is protected and only shared as per regulatory requirements.
+  tags: [privacy, security, data, compliance, protocols]
+
+- question: Can I use ONDC for B2B transactions?
+  answer: |
+    Yes, ONDC supports both B2C and B2B transactions, enabling a wide range of commerce scenarios across sectors.
+  tags: [b2b, b2c, transactions, commerce, sectors]
+
+- question: What technology standards does ONDC use?
+  answer: |
+    ONDC leverages open standards and APIs to enable seamless interoperability between different platforms and participants.
+  tags: [technology, standards, api, interoperability, open]
+
+- question: How do I resolve disputes on ONDC?
+  answer: |
+    Disputes on ONDC are handled through platform-specific mechanisms, with escalation paths defined for unresolved issues. Refer to your platform's support for details.
+  tags: [disputes, support, help, resolution, escalation]

@@ -1,5 +1,11 @@
+:root {
+  --bs-primary: #0A4C9A;
+  --ondc-accent: #00A98F;
+}
+
 body {
-    padding-top: 3rem;
+  font-family: 'Poppins', Arial, sans-serif;
+  padding-top: 2.5rem;
 }
 
 .card {
@@ -17,4 +23,28 @@ body {
 
 .tag:hover {
     background-color: #444 !important;
+}
+
+.badge {
+  background: var(--ondc-accent) !important;
+  color: #fff;
+  border-radius: 1rem;
+  font-size: 0.95em;
+  font-weight: 500;
+  margin-right: 0.25em;
+}
+
+.accordion-button:not(.collapsed) {
+  color: var(--bs-primary);
+  background: #eaf3fa;
+}
+
+.accordion-item {
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #e0e0e0;
+}
+
+#faqAccordion .accordion-body {
+  background: #f8f9fa;
 }
