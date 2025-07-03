@@ -1,14 +1,15 @@
 # ONDC FAQs
 
-A static, searchable FAQ library for ONDC, styled with ONDC brand colours and fonts. Powered by YAML data, Bootstrap 5, and js-yaml. No build tools required—just open `index.html` or deploy to GitHub Pages.
+A static, searchable FAQ library for ONDC, styled with ONDC brand colours and fonts. Powered by YAML data, Bootstrap 5, js-yaml, and Fuse.js for fuzzy search. No build tools required—just open `index.html` or deploy to GitHub Pages.
 
 ## Features
 
 - ONDC branding (logo, colours, Poppins font)
-- Instant search by tag or question
+- Instant fuzzy search by tag, question, or answer (Fuse.js)
 - Accordion UI for FAQs
-- Data in editable YAML (`data/faqs.yaml`)
+- Data in editable YAML (`data/faqs_enriched.yaml`)
 - Responsive, works on any device
+- Result count and no-match alert
 
 ## Local Preview
 
@@ -27,7 +28,7 @@ A static, searchable FAQ library for ONDC, styled with ONDC brand colours and fo
 
 ## Editing FAQs
 
-- Edit `data/faqs.yaml`.
+- Edit `data/faqs_enriched.yaml`.
 - Each FAQ:
   ```yaml
   - question: Your question here
@@ -37,6 +38,12 @@ A static, searchable FAQ library for ONDC, styled with ONDC brand colours and fo
   ```
 - Use 3–5 lowercase tags per FAQ.
 - Save and refresh to see changes.
+
+## Fuzzy Search
+
+- Powered by [Fuse.js](https://fusejs.io/)
+- Search matches question, answer, or tags (ranked by relevance)
+- Result count shown below search box
 
 ## License
 
