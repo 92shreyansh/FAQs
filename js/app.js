@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     // Fetch enriched YAML
-    const response = await fetch('data/faqs_enriched.yaml');
+    const response = await fetch('data/faqs.yaml');
     const yamlText = await response.text();
     const faqs = window.jsyaml.load(yamlText);
     faqs.forEach((faq, i) => faq.id = i); // assign unique id
