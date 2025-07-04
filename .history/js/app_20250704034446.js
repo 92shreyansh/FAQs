@@ -8,20 +8,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Strict normalization for FlexSearch
     const validFaqs = [];
     faqs.forEach((faq, i) => {
+      // Defensive: ensure question/answer are strings
       faq.question = typeof faq.question === 'string' ? faq.question : '';
       faq.answer = typeof faq.answer === 'string' ? faq.answer : '';
+      // Defensive: tags must be array of strings
       if (!Array.isArray(faq.tags)) faq.tags = [];
       faq.tags = faq.tags.filter(tag => typeof tag === 'string');
-      faq.tags_str = faq.tags.join(' '); // for FlexSearch
+      // Only index if question and answer are strings and tags is array of strings
       if (faq.question && faq.answer && Array.isArray(faq.tags)) {
         faq.id = validFaqs.length;
         validFaqs.push(faq);
       }
     });
 
-    // Build FlexSearch Document index (index tags_str as string)
+    // Build FlexSearch Document index
     const index = new FlexSearch.Document({
-      document: { id: 'id', index: ['question', 'answer', 'tags_str'] },
+      document: { id: 'id', index: ['question', 'answer', 'tags'] },
       tokenize: 'forward',
       cache: true,
       encode: 'balance',
