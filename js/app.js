@@ -4,30 +4,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const response = await fetch('data/faqs.yaml');
     const yamlText = await response.text();
     const faqs = window.jsyaml.load(yamlText);
+    faqs.forEach((faq, i) => faq.id = i); // assign unique id
 
-    // Strict normalization for FlexSearch
-    const validFaqs = [];
-    faqs.forEach((faq, i) => {
-      faq.question = typeof faq.question === 'string' ? faq.question : '';
-      faq.answer = typeof faq.answer === 'string' ? faq.answer : '';
-      if (!Array.isArray(faq.tags)) faq.tags = [];
-      faq.tags = faq.tags.filter(tag => typeof tag === 'string');
-      faq.tags_str = faq.tags.join(' '); // for FlexSearch
-      if (faq.question && faq.answer && Array.isArray(faq.tags)) {
-        faq.id = validFaqs.length;
-        validFaqs.push(faq);
-      }
+    // Build Fuse.js index
+    const fuse = new Fuse(faqs, {
+      keys: ['question', 'answer', 'tags'],
+      threshold: 0.35,
+      includeScore: true,
+      ignoreLocation: true
     });
-
-    // Build FlexSearch Document index (index tags_str as string)
-    const index = new FlexSearch.Document({
-      document: { id: 'id', index: ['question', 'answer', 'tags_str'] },
-      tokenize: 'forward',
-      cache: true,
-      encode: 'balance',
-      threshold: 1
-    });
-    validFaqs.forEach(faq => index.add(faq));
 
     const searchInput = document.getElementById('tagSearch');
     const accordion = document.getElementById('faqAccordion');
@@ -38,15 +23,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       resultCount.className = 'small text-muted mt-1 mb-2';
       searchInput.insertAdjacentElement('afterend', resultCount);
     }
-    const TOTAL = validFaqs.length;
+    const TOTAL = faqs.length;
 
     // Highlight match in question
     const highlight = (text, query) => {
       if (!query) return text;
-      // Split query into words, highlight each
-      const words = query.trim().split(/\s+/).filter(Boolean);
-      if (!words.length) return text;
-      const re = new RegExp(`(${words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'ig');
+      const re = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'ig');
       return text.replace(re, '<mark>$1</mark>');
     };
 
@@ -60,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       resultCount.textContent = `Showing ${list.length} of ${TOTAL} FAQs`;
       list.forEach((faq, i) => {
-        const tags = faq.tags.map(tag => `<span class="badge me-1">${tag}</span>`).join('');
+        const tags = faq.tags && Array.isArray(faq.tags) ? faq.tags.map(tag => `<span class="badge me-1">${tag}</span>`).join('') : '';
         const qHtml = highlight(faq.question, query);
         accordion.innerHTML += `
           <div class="accordion-item">
@@ -84,26 +66,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const doSearch = (query) => {
       const q = query.trim();
       if (!q) {
-        render(validFaqs, '');
+        render(faqs, '');
         return;
       }
-      // FlexSearch returns array of result sets per field, flatten, unique by id
-      const results = index.search(q, { enrich: true, limit: 20 });
-      const flat = [];
-      const seen = new Set();
-      results.forEach(set => {
-        set.result.forEach(({id}) => {
-          if (!seen.has(id)) {
-            seen.add(id);
-            flat.push(validFaqs[id]);
-          }
-        });
-      });
-      render(flat, q);
+      const res = fuse.search(q);
+      render(res.map(r => r.item), q);
     };
 
     // Initial render
-    render(validFaqs, '');
+    render(faqs, '');
 
     // Input event
     searchInput.addEventListener('input', e => doSearch(e.target.value));
