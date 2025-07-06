@@ -1,29 +1,33 @@
 # ONDC FAQs
 
-A static, searchable FAQ library for ONDC, styled with ONDC brand colours and fonts. Powered by YAML data, Bootstrap 5, js-yaml, and FlexSearch for fast, typo-tolerant fuzzy search. No build tools required—just open `index.html` or deploy to GitHub Pages.
+A static, searchable FAQ library for ONDC, styled with ONDC brand colours and fonts. Powered by YAML data, Bootstrap 5, js-yaml, and Fuse.js for fast, typo-tolerant fuzzy search. No build tools required—just open `index.html` or deploy to GitHub Pages.
 
 ## Features
 
 - ONDC branding (logo, colours, Poppins font)
-- Instant fuzzy search by tag, question, or answer (FlexSearch)
+- Instant fuzzy search by tag, question, or answer (Fuse.js)
 - Accordion UI for FAQs
 - Data in editable YAML (`data/faqs.yaml`)
 - Responsive, works on any device
 - Result count and no-match alert
 
-## Why FlexSearch?
+## How it Works
 
-FlexSearch offers high-performance, typo-tolerant, and phonetic fuzzy search in the browser. It is faster and more accurate than Fuse.js for large FAQ sets, supports advanced scoring, and handles misspellings and partial matches efficiently.
+- FAQs are stored in `data/faqs.yaml` (edit in plain text, supports markdown in answers).
+- The app loads and parses the YAML file in the browser using js-yaml.
+- Fuse.js provides typo-tolerant, ranked search across questions, answers, and tags.
+- Results are shown in a Bootstrap accordion, with tags and markdown support.
 
 ## Local Preview
 
 1. Run a local server (e.g. with [serve](https://npmjs.com/package/serve)):
+
    ```sh
    npx serve .
    ```
 
-   Or use VS Code Live Server extension.
-2. Open `http://localhost:3000` (or shown URL) in your browser.
+   Or use the VS Code Live Server extension.
+2. Open the shown URL (e.g. `http://localhost:3000`) in your browser.
 
 ## Deploy to GitHub Pages
 
@@ -46,12 +50,8 @@ FlexSearch offers high-performance, typo-tolerant, and phonetic fuzzy search in 
 
 ## Fuzzy Search
 
-- Powered by [FlexSearch](https://github.com/nextapps-de/flexsearch)
+- Powered by [Fuse.js](https://fusejs.io/)
 - Search matches question, answer, or tags (ranked by relevance, typo-tolerant)
 - Result count shown below search box
-
-## License
-
-MIT License
 
 © 2025 ONDC
